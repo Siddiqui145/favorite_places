@@ -1,15 +1,27 @@
-import 'package:favorite_places/screens/home_screen.dart';
+import 'package:favorite_places/providers/places_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AddPlaceScreen extends StatefulWidget {
+class AddPlaceScreen extends ConsumerStatefulWidget {
   const AddPlaceScreen({super.key});
 
   @override
-  State<AddPlaceScreen> createState() => _AddPlaceScreenState();
+  ConsumerState<AddPlaceScreen> createState() => _AddPlaceScreenState();
 }
 
-class _AddPlaceScreenState extends State<AddPlaceScreen> {
+class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
   final titleController = TextEditingController();
+
+  void savePlace(){
+    final enteredTitle = titleController.text;
+
+    if (enteredTitle.isEmpty) {
+      return;
+    }
+
+    ref.read(userPlacesProvider.notifier).addPlace(enteredTitle);
+    Navigator.of(context).pop();
+  }
 
   @override
   void dispose() {
@@ -42,9 +54,7 @@ class _AddPlaceScreenState extends State<AddPlaceScreen> {
               height: 16,
             ),
             ElevatedButton.icon(
-              onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen()));
-              }, 
+              onPressed: savePlace,
               icon: Icon(Icons.add, color: Colors.white,),
               label: Text('Add Place',
               style: TextStyle(color: Colors.white),))
