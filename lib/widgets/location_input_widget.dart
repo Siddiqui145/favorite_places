@@ -1,8 +1,10 @@
 import 'dart:convert';
 
 import 'package:favorite_places/models/place_model.dart';
+import 'package:favorite_places/screens/map_screen.dart';
 import 'package:favorite_places/secrets/api_key.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
 
@@ -63,8 +65,11 @@ if (permissionGranted == PermissionStatus.denied) {
       if (latitude == null || longitude == null){ //handling null so avoid warnings safe from issues
         return;
       }
+  savePlace(latitude, longitude);
+}
 
-      final url = Uri.parse('https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$apiKey');
+  Future<void> savePlace(double latitude, double longitude) async {
+    final url = Uri.parse('https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$apiKey');
 
       final response = await http.get(url);
       final resData = json.decode(response.body);
@@ -84,7 +89,20 @@ if (permissionGranted == PermissionStatus.denied) {
         isgettingLocation = false;
     });
     widget.onSelectLocation(pickedLocation!);
-}
+  }
+
+  void selectOnMap() async {
+    final pickedLocation = await Navigator.of(context).push<LatLng>(
+      MaterialPageRoute(
+        builder: (context) => MapScreen()
+      )
+    );
+
+    if (pickedLocation == null){
+      return;
+    }
+    savePlace(pickedLocation.latitude, pickedLocation.longitude);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,7 +149,7 @@ if (permissionGranted == PermissionStatus.denied) {
                 icon: Icon(Icons.location_on),),
 
               TextButton.icon(
-                onPressed: () {}, 
+                onPressed: selectOnMap, 
                 label: Text('Select on Map'),
                 icon: Icon(Icons.map),),
             ],
