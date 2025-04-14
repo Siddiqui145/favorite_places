@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:favorite_places/providers/places_provider.dart';
 import 'package:favorite_places/widgets/image_input_widget.dart';
+import 'package:favorite_places/widgets/location_input_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -63,6 +64,10 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
                   selectedImage = image;
                 },
               ),
+              const SizedBox(
+                height: 16,
+              ),
+              LocationInputWidget(),
               const SizedBox(
                 height: 16,
               ),
