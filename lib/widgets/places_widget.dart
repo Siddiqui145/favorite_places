@@ -37,6 +37,11 @@ class PlacesWidget extends StatelessWidget {
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => PlaceDetailsScreen(place: place)));
             },
+            subtitle: Text(place.location.address,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(
+              color: Theme.of(context).colorScheme.onSurface
+            )
+            ),
           );
         },
       ),
