@@ -18,21 +18,28 @@ class PlacesWidget extends StatelessWidget {
             color: Theme.of(context).colorScheme.onSurface),),
       );
     }
-    return ListView.builder(
-      itemCount: places.length,
-      itemBuilder: (context, index) {
-        final place = places[index];
-
-        return ListTile(
-          title: Text(place.title,
-          style: Theme.of(context).textTheme.titleMedium!.copyWith(
-            color: Theme.of(context).colorScheme.onSurface
-          ),),
-          onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => PlaceDetailsScreen(place: place)));
-          },
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ListView.builder(
+        itemCount: places.length,
+        itemBuilder: (context, index) {
+          final place = places[index];
+      
+          return ListTile(
+            leading: CircleAvatar(
+              radius: 26,
+              backgroundImage: FileImage(place.image),
+            ),
+            title: Text(place.title,
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(
+              color: Theme.of(context).colorScheme.onSurface
+            ),),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => PlaceDetailsScreen(place: place)));
+            },
+          );
+        },
+      ),
     );
   }
 }
