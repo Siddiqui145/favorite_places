@@ -1,4 +1,5 @@
 import 'package:favorite_places/models/place_model.dart';
+import 'package:favorite_places/screens/map_screen.dart';
 import 'package:favorite_places/secrets/api_key.dart';
 import 'package:flutter/material.dart';
 
@@ -39,9 +40,19 @@ class PlaceDetailsScreen extends StatelessWidget {
             right: 0,
             child: Column(
               children: [
-                CircleAvatar(
-                  radius: 70,
-                  backgroundImage: NetworkImage(locationImage),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => 
+                      MapScreen(
+                      location: place.location,
+                      isSelecting: false,
+                    )));
+                  },
+                  child: CircleAvatar(
+                    radius: 70,
+                    backgroundImage: NetworkImage(locationImage),
+                  ),
                 ),
                 Container(
                   alignment: Alignment.center,
