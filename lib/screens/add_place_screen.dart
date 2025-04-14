@@ -39,31 +39,33 @@ class _AddPlaceScreenState extends ConsumerState<AddPlaceScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 25,
-            ),
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Title',
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 25,
               ),
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-              controller: titleController,
-            ),
-            const SizedBox(
-              height: 16,
-            ),
-            ImageInputWidget(),
-            const SizedBox(
-              height: 16,
-            ),
-            ElevatedButton.icon(
-              onPressed: savePlace,
-              icon: Icon(Icons.add, color: Colors.white,),
-              label: Text('Add Place',
-              style: TextStyle(color: Colors.white),))
-          ],
+              TextField(
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                ),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                controller: titleController,
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+              ImageInputWidget(),
+              const SizedBox(
+                height: 16,
+              ),
+              ElevatedButton.icon(
+                onPressed: savePlace,
+                icon: Icon(Icons.add, color: Colors.white,),
+                label: Text('Add Place',
+                style: TextStyle(color: Colors.white),))
+            ],
+          ),
         ),
       ),
     );
