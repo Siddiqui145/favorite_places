@@ -4,12 +4,26 @@ import 'package:favorite_places/widgets/places_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final favPlaces = ref.watch(userPlacesProvider);
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  late Future<void> placesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    placesFuture = ref.read(userPlacesProvider.notifier).loadPlaces();
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    final userPlaces = ref.read(userPlacesProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -21,7 +35,18 @@ class HomeScreen extends ConsumerWidget {
         ],
         backgroundColor: Colors.black,
       ),
-      body: PlacesWidget(places: favPlaces),
+      body: Padding(
+      padding: EdgeInsets.all(16),
+      child: FutureBuilder(
+        future: placesFuture, 
+        builder: (context, snapshot) =>
+          snapshot.connectionState == ConnectionState.waiting
+          ? const Center(
+            child: CircularProgressIndicator()
+          )
+          : PlacesWidget(places: userPlaces)
+        ),
+        ),
     );
   }
 }
