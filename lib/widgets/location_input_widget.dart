@@ -1,12 +1,15 @@
 import 'dart:convert';
 
 import 'package:favorite_places/models/place_model.dart';
+import 'package:favorite_places/secrets/api_key.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:location/location.dart';
 
 class LocationInputWidget extends StatefulWidget {
-  const LocationInputWidget({super.key});
+  const LocationInputWidget({super.key, required this.onSelectLocation});
+
+  final void Function(PlaceLocation location) onSelectLocation;
 
   @override
   State<LocationInputWidget> createState() => _LocationInputWidgetState();
@@ -15,6 +18,14 @@ class LocationInputWidget extends StatefulWidget {
 class _LocationInputWidgetState extends State<LocationInputWidget> {
   PlaceLocation? pickedLocation;
   var isgettingLocation = false;
+
+  String get locationImage {
+
+    final lat = pickedLocation!.latitude;
+    final lon = pickedLocation!.longitude;
+
+    return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lon&zoom=16&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:A%7C$lat,$lon&key=$apiKey';
+  }
 
   void getCurrentLocation() async {
 
@@ -53,19 +64,26 @@ if (permissionGranted == PermissionStatus.denied) {
         return;
       }
 
-      final url = Uri.parse('https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=AIzaSyBoGcwaQUSmNgcesK-6aoJzNNihJiAq6pI');
+      final url = Uri.parse('https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=$apiKey');
 
       final response = await http.get(url);
       final resData = json.decode(response.body);
-      final address = resData['results'][0]['formatted_address'];
+      
+      String address = 'Unknown location';
+      if (resData['status'] == 'OK' && resData['results'].isNotEmpty) {
+          address = resData['results'][0]['formatted_address'];
+        }
+
 
     setState(() {
-      isgettingLocation = false;
       pickedLocation = PlaceLocation(
         latitude: latitude, 
         longitude: longitude, 
         address: address);
+
+        isgettingLocation = false;
     });
+    widget.onSelectLocation(pickedLocation!);
 }
 
   @override
@@ -76,6 +94,14 @@ if (permissionGranted == PermissionStatus.denied) {
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
               color: Theme.of(context).colorScheme.onSurface
             ),);
+
+
+    if (pickedLocation != null) {
+      previewContent = Image.network(locationImage,
+      fit: BoxFit.cover,
+      height: double.infinity,
+      width: double.infinity,);
+    }
 
     if (isgettingLocation)            {
       previewContent = const CircularProgressIndicator();
