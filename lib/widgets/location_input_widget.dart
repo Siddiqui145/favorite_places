@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:location/location.dart';
+import 'dart:convert';
 
-// AIzaSyBoGcwaQUSmNgcesK-6aoJzNNihJiAq6pI
+import 'package:favorite_places/models/place_model.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:location/location.dart';
 
 class LocationInputWidget extends StatefulWidget {
   const LocationInputWidget({super.key});
@@ -11,12 +13,10 @@ class LocationInputWidget extends StatefulWidget {
 }
 
 class _LocationInputWidgetState extends State<LocationInputWidget> {
-  Location? pickedLocation;
+  PlaceLocation? pickedLocation;
   var isgettingLocation = false;
 
   void getCurrentLocation() async {
-
-    
 
     Location location = Location();
 
@@ -46,8 +46,25 @@ if (permissionGranted == PermissionStatus.denied) {
 
       locationData = await location.getLocation();
 
+      final latitude = locationData.latitude;
+      final longitude = locationData.longitude;
+
+      if (latitude == null || longitude == null){ //handling null so avoid warnings safe from issues
+        return;
+      }
+
+      final url = Uri.parse('https://maps.googleapis.com/maps/api/geocode/json?latlng=$latitude,$longitude&key=AIzaSyBoGcwaQUSmNgcesK-6aoJzNNihJiAq6pI');
+
+      final response = await http.get(url);
+      final resData = json.decode(response.body);
+      final address = resData['results'][0]['formatted_address'];
+
     setState(() {
       isgettingLocation = false;
+      pickedLocation = PlaceLocation(
+        latitude: latitude, 
+        longitude: longitude, 
+        address: address);
     });
 }
 
